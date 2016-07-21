@@ -19,15 +19,14 @@ ensure_ets_table() ->
 		_  -> ?ETS_NAME
 	end.
 
-handle_read_file(Module, {error, enoent}) -> erlang:error({no_config_file_for_module, Module, file:get_cwd()});
+handle_read_file(Module, {error, enoent}) -> ?WARN("missing config for ~p", [Module]), [];
 handle_read_file(_Module, {ok, [Cfg]}) -> Cfg;
-handle_read_file(_Module, Err) -> erlang:error({config_file_read_error, Err}).
+handle_read_file(Module, _Err) -> ?ERR("error reading config for ~p", [Module]), [].
 
 handle_module_cfg(Module, []) ->
-	Path = filename:join("cfg", Module),
+	Path = filename:join(?PATH, Module),
 	Cfg = handle_read_file(Module, file:consult(Path)),
 	ets:insert(?ETS_NAME, {Module, Cfg}),
-	?INFO("Loaded config for module:~p, path:~p, data:~180p", [Module, Path, Cfg]),
 	Cfg;
 handle_module_cfg(Module, [{Module, PropList}]) -> PropList.
 ensure_module_cfg(Module) ->
