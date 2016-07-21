@@ -1,5 +1,4 @@
 -module(scl_cfg).
--include_lib("scl/include/logger.hrl").
 -export([validate/1, get/2, get/3, map_cfg/2]).
 -define(PATH, "cfg").
 -define(ETS_NAME, cfg).
@@ -19,9 +18,9 @@ ensure_ets_table() ->
 		_  -> ?ETS_NAME
 	end.
 
-handle_read_file(Module, {error, enoent}) -> ?WARN("missing config for ~p", [Module]), [];
+handle_read_file(Module, {error, enoent}) -> error_logger:warn_msg("missing config for ~p", [Module]), [];
 handle_read_file(_Module, {ok, [Cfg]}) -> Cfg;
-handle_read_file(Module, _Err) -> ?ERR("error reading config for ~p", [Module]), [].
+handle_read_file(Module, _Err) -> error_logger:error_msg("error reading config for ~p", [Module]), [].
 
 handle_module_cfg(Module, []) ->
 	Path = filename:join(?PATH, Module),
