@@ -1,0 +1,8 @@
+{application, scl,
+[
+	{description, "Simple config and logger"},
+	{vsn, "1"},
+	{registered, []},
+	{applications, [kernel, stdlib]},
+	{env, []}
+]}.
